@@ -24,6 +24,7 @@ urlpatterns = [
     path('', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('doctor-dashboard/', doctor_dashboard, name='doctor_dashboard'),
+    path('doctor-dashboard/<int:doctor_id>/', doctor_dashboard, name='doctor_dashboard_with_id'),
     path('patient-medical-records/', record_list, name='record_list' ),
     path('record/', records, name='records'),
 
