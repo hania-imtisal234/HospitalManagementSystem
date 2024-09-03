@@ -18,7 +18,7 @@
         <td>{{ patient.email }}</td>
         <td>{{ patient.gender }}</td>
         <td>
-            <a href="{% url 'patient' patient.pk %}">View</a>
+            <a href="{% url 'patient_detail_view' patient.pk %}">View</a>
             <a href="{% url 'update_patient_view' patient.pk %}">Edit</a>
             <a href="{% url 'delete_patient_view' patient.pk %}">Delete</a>
         </td>
