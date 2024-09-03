@@ -10,7 +10,7 @@
     <h1>Doctor Name: {{ doctor_user.full_name }}</h1>
     <h2>Specialization: {{ doctor_user.specialization }}</h2>
     <p>Phone no: {{ doctor_user.phone_number }}</p>
-    {% if appointments_with_records.exists %}
+    {% if appointments_with_records %}
     <ul>
         {% for entry in appointments_with_records %}
             <li>
