@@ -136,8 +136,9 @@ def user_login(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 @login_required
-def doctor_dashboard(request):
-    user_id = request.GET.get('user_id')
+def doctor_dashboard(request, doctor_id=None):
+    # user_id = request.GET.get('user_id')
+    user_id = doctor_id if doctor_id else request.GET.get('user_id')
     # print(user_id)
     user = None
     if user_id:
@@ -186,6 +187,7 @@ def record_list(request):
         'record_list': record_lists,
         'record_form': recordform,
     })
+
 
 def records(request):
     if request.method == 'POST':
