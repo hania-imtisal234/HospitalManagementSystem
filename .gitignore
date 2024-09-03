@@ -3,6 +3,7 @@ env/
 venv/
 .venv/
 
+.idea/
 # Python cache files
 *.pyc
 __pycache__/
