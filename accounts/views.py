@@ -32,8 +32,12 @@ def user_login(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 @login_required
-def doctor_dashboard(request):
-    user_id = request.GET.get('user_id')
+
+def doctor_dashboard(request, doctor_id=None):
+    # user_id = request.GET.get('user_id')
+    user_id = doctor_id if doctor_id else request.GET.get('user_id')
+    # print(user_id)
+    user = None
     if user_id:
         try:
             doctor_user = get_object_or_404(CustomUser, id=user_id)
@@ -60,41 +64,39 @@ def doctor_dashboard(request):
     })
 
 def record_list(request):
-    if request.method == 'POST':
-        appointment_id = request.POST.get('appointment_id')
-        patient_id = request.POST.get('patient_id')
-        doctor_id = request.POST.get('doctor_id')
-        records = MedicalRecord.objects.filter(appointment_id=appointment_id)
-        recordform = CreateRecordForm()
+    appointment_id = request.POST.get('appointment_id') or request.session.get('appointment_id')
+    patient_id = request.POST.get('patient_id') or request.session.get('patient_id')
+    doctor_id = request.POST.get('doctor_id') or request.session.get('doctor_id')
 
-        # records = request.POST.get('records')
-        # print(appointment_id, doctor_id, patient_id)
+    records = MedicalRecord.objects.filter(appointment_id=appointment_id)
+    recordform = CreateRecordForm()
 
-        record_lists = {
-            'appointment_id': appointment_id,
-            'patient_id': patient_id,
-            'doctor_id': doctor_id,
-            'records': records
-        }
-        # print('in record_list view')
-        # print(record_lists['records'])
+    record_lists = {
+        'appointment_id': appointment_id,
+        'patient_id': patient_id,
+        'doctor_id': doctor_id,
+        'records': records
+    }
 
-    return render(request, 'patients/med-records.html',{
+    return render(request, 'patients/med-records.html', {
         'record_list': record_lists,
-        "record_form": recordform,
-
+        'record_form': recordform,
     })
+
 
 def records(request):
     if request.method == 'POST':
         records_form = CreateRecordForm(request.POST)
         if records_form.is_valid():
-            print(records_form.cleaned_data)
+            # print(records_form.cleaned_data)
             appointment_id = request.POST.get('appointment_id')
             patient_id = request.POST.get('patient_id')
             doctor_id = request.POST.get('doctor_id')
             type_edit = request.POST.get('type')
-            print(patient_id, appointment_id, doctor_id)
+            print(appointment_id)
+            print(patient_id)
+            print(doctor_id)
+
             print(type_edit)
             appointment = Appointment.objects.get(id=appointment_id)
             doctor = CustomUser.objects.get(id=doctor_id)
@@ -117,11 +119,17 @@ def records(request):
                         notes=records_form.cleaned_data['notes'],
                         report=records_form.cleaned_data['report'],
                     )
-                return redirect('patient-medical-records')
-            except:
-                print("Error")
+                request.session['appointment_id'] = appointment_id
+                request.session['patient_id'] = patient_id
+                request.session['doctor_id'] = doctor_id
 
-    return redirect('doctor-dashboard')
+                return redirect('record_list')
+
+                # return render(request, 'patients/med-records.html')
+            except Exception as e:
+                print("Error:", e)
+
+    return render(request, 'patients/med-records.html')
 @login_required
 def admin_dashboard(request):
     return render(request, 'accounts/admin.html')

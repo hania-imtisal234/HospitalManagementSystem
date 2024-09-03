@@ -21,6 +21,7 @@
             <a href="{% url 'doctor_detail_view' doctor.pk %}">View</a>
             <a href="{% url 'update_doctor_view' doctor.pk %}">Edit</a>
             <a href="{% url 'delete_doctor_view' doctor.pk %}">Delete</a>
+            <a href="{% url 'doctor_dashboard_with_id' doctor.pk %}">See Appointments</a>
         </td>
     </tr>
     {% endfor %}
