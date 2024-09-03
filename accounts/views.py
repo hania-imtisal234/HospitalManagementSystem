@@ -105,11 +105,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from accounts.forms import LoginForm, DoctorProfileForm, CreateRecordForm  # Import the DoctorProfileForm
+from accounts.forms import LoginForm, DoctorProfileForm, CreateRecordForm ,PatientProfileForm # Import the DoctorProfileForm
 from django.urls import reverse
-
-# from database import appointments
 from .models import CustomUser, Appointment, MedicalRecord  # Import the CustomUser model
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -128,6 +127,7 @@ def user_login(request):
                     return redirect('admin_dashboard')
                 elif user.is_doctor():
                     return redirect(reverse('doctor_dashboard') + f'?user_id={user.id}')
+
             else:
                 return render(request, 'accounts/login.html', {'form': form, 'error': 'Invalid credentials'})
     else:
@@ -247,20 +247,21 @@ def user_logout(request):
 def doctor_list_view(request):
     search_query = request.GET.get('search', '')
     specialization_filter = request.GET.get('specialization', '')
-    
     doctors = CustomUser.objects.filter(role='doctor')
     
     if search_query:
         doctors = doctors.filter(full_name__icontains=search_query)
-    
+
     if specialization_filter:
         doctors = doctors.filter(specialization__icontains=specialization_filter)
     
     context = {
+        'list_name': "Doctor's List",
         'doctors': doctors,
         'search_query': search_query,
         'specialization_filter': specialization_filter,
     }
+    
     return render(request, 'accounts/doctor_list.html', context)
 
 @login_required
@@ -281,7 +282,9 @@ def create_update_doctor_view(request, pk=None):
         form = DoctorProfileForm(request.POST, instance=doctor)
         if form.is_valid():
             doctor_profile = form.save(commit=False)
-            # Optionally, set any additional attributes
+            doctor_profile.role = 'doctor' 
+            doctor_profile.user = request.user
+            doctor_profile.save()
             form.save()
             return redirect('doctor_list_view')
     else:
@@ -299,23 +302,61 @@ def delete_doctor_view(request, pk):
     return render(request, 'accounts/doctor_confirm_delete.html', {'doctor': doctor})
 
 
-# @login_required
-# @user_passes_test(admin_required)
-# def patient_list_view(request):
-#     search_query = request.GET.get('search', '')
-#     gender_filter = request.GET.get('gender', '')
+
+@login_required
+@user_passes_test(admin_required)
+def patient_list_view(request):
+    search_query = request.GET.get('search', '')
+    gender_filter = request.GET.get('gender', '')
     
-#     patients = CustomUser.objects.filter(role='patient')
+    patients = CustomUser.objects.filter(role='patient')
     
-#     if search_query:
-#         patients = patients.filter(full_name__icontains=search_query)
+    if search_query:
+        patients = patients.filter(full_name__icontains=search_query)
     
-#     if gender_filter:
-#         patients = patients.filter(gender__icontains=gender_filter)
+    if gender_filter:
+        patients = patients.filter(gender__icontains=gender_filter)
     
-#     context = {
-#         'patients': patients,
-#         'search_query': search_query,
-#         'gender_filter': gender_filter,
-#     }
-#     return render(request, 'accounts/doctor_list.html', context)
+    context = {
+        'list_name': "Patient's List",
+        'patients': patients,
+        'search_query': search_query,
+        'gender_filter': gender_filter,
+    }
+    return render(request, 'patients/patient_list.html', context)
+
+
+@login_required
+@user_passes_test(admin_required)
+def patient_detail_view(request, pk):
+    patient = get_object_or_404(CustomUser, pk=pk, role='patient')
+    return render(request, 'patients/patient_detail.html', {'patient': patient})
+
+@login_required
+@user_passes_test(admin_required)
+def create_update_patient_view(request, pk=None):
+    if pk:
+        patient = get_object_or_404(CustomUser, pk=pk, role='patient')
+    else:
+        patient = None
+    
+    if request.method == 'POST':
+        form = PatientProfileForm(request.POST, instance=patient)
+        if form.is_valid():
+            patient_profile = form.save(commit=False)
+            form.save()
+            return redirect('patient_list_view')
+    else:
+        form = PatientProfileForm(instance=patient)
+    
+    return render(request, 'patients/patient_form.html', {'form': form})
+
+@login_required
+@user_passes_test(admin_required)
+def delete_patient_view(request, pk):
+    patient = get_object_or_404(CustomUser, pk=pk, role='patient')
+    if request.method == 'POST':
+        patient.delete()
+        return redirect('patient_list_view')
+    return render(request, 'patients/patient_confirm_delete.html', {'patient': patient})
+

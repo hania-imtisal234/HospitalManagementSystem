@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from .models import CustomUser, Appointment, MedicalRecord  # Import the CustomUser model
+
 
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'email', 'role', 'specialization', 'created_at')
@@ -15,5 +17,7 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 # Register the CustomUser model with the admin site using the CustomUserAdmin configuration
 admin.site.register(CustomUser, CustomUserAdmin)
+
 admin.site.register(Appointment)
 admin.site.register(MedicalRecord)
+

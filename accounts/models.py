@@ -39,9 +39,11 @@ from time import timezone
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
 from patients.models import Patient
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+
 
 class CustomUser(AbstractUser):
     # Define roles as choices
@@ -51,7 +53,8 @@ class CustomUser(AbstractUser):
         ('patient', 'Patient'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='admin')
-    full_name = models.CharField(max_length=255)
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True) 
+    full_name = models.CharField(max_length=255 , blank= True, null=True)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     specialization = models.CharField(max_length=100, blank=True, null=True)
@@ -115,3 +118,8 @@ class MedicalRecord(models.Model):
     def __str__(self):
         return f"Medical Record for {self.diagnosis} - {self.created_at.strftime('%Y-%m-%d')}"
 
+    def is_doctor(self):
+        return self.role == 'doctor'
+
+    def is_patient(self):
+        return self.role == 'patient'

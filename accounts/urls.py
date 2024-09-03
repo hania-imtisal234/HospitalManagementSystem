@@ -1,7 +1,24 @@
 
 from django.urls import path
 from django.urls import path
-from .views import admin_dashboard, create_update_doctor_view, delete_doctor_view, doctor_detail_view, doctor_list_view, user_login, doctor_dashboard, user_logout, record_list, records
+
+from .views import (
+    admin_dashboard,
+    create_update_doctor_view,
+    delete_doctor_view,
+    doctor_detail_view,
+    doctor_list_view,
+    user_login,
+    doctor_dashboard,
+    user_logout,
+    record_list,
+    records,
+    create_update_patient_view,
+    delete_patient_view,
+    patient_detail_view,
+    patient_list_view
+)
+
 
 urlpatterns = [
     path('', user_login, name='login'),
@@ -18,9 +35,10 @@ urlpatterns = [
     path('doctors/delete/<int:pk>/', delete_doctor_view, name='delete_doctor_view'),
     
     #Patient URL:
-    # path('patients/', patient_list_view, name ='patient_list_view'),
-    # path('patients/<int:pk>/', patient_detail_view, name='patient_detail_view'),
-    # path('patients/create/', create_update_patient_view, name='create_patient_view'),
-    # path('patients/update/<int:pk>/', create_update_patient_view, name='update_patient_view'),
-    # path('patients/delete/<int:pk>/', delete_patient_view, name='delete_patient_view'),
+    path('patients/', patient_list_view, name ='patient_list_view'),
+    path('patients/<int:pk>/', patient_detail_view, name='patient_detail_view'),
+    path('patients/create/', create_update_patient_view, name='create_patient_view'),
+    path('patients/update/<int:pk>/', create_update_patient_view, name='update_patient_view'),
+    path('patients/delete/<int:pk>/', delete_patient_view, name='delete_patient_view'),
+
 ]
