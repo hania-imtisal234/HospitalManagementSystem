@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, doctor!</h1>
+    <p>This is the doctor dashboard.</p>
+    <h1>Doctor Name: {{ doctor_user.full_name }}</h1>
+    <h2>Specialization: {{ doctor_user.specialization }}</h2>
+    <p>Phone no: {{ doctor_user.phone_number }}</p>
+    <ul>
+        {% for entry in appointments_with_records %}
+            <li>
+            Appointment with {{ entry.appointment.patient.full_name }}
+            scheduled at {{ entry.appointment.scheduled_at }}
+            </li>
+            <form action="/patient-medical-records/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="records" value="{{ entry.records }}">
+            <input type="hidden" name="appointment_id" value="{{ entry.appointment.id }}">
+            <input type="hidden" name="patient_id" value="{{ entry.appointment.patient.id }}">
+            <input type="hidden" name="doctor_id" value="{{ doctor_user.id }}">
+            <button type="submit">Records</button>
+            </form>
+
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
