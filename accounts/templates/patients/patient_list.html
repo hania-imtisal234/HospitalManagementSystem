@@ -9,18 +9,18 @@
     <tr>
         <th>Full Name</th>
         <th>Email</th>
-        <th>Specialization</th>
+        <th>Gender</th>
         <th>Actions</th>
     </tr>
-    {% for doctor in doctors %}
+    {% for patient in patients %}
     <tr>
-        <td>{{ doctor.full_name }}</td>
-        <td>{{ doctor.email }}</td>
-        <td>{{ doctor.specialization }}</td>
+        <td>{{ patient.full_name }}</td>
+        <td>{{ patient.email }}</td>
+        <td>{{ patient.gender }}</td>
         <td>
-            <a href="{% url 'doctor_detail_view' doctor.pk %}">View</a>
-            <a href="{% url 'update_doctor_view' doctor.pk %}">Edit</a>
-            <a href="{% url 'delete_doctor_view' doctor.pk %}">Delete</a>
+            <a href="{% url 'patient' patient.pk %}">View</a>
+            <a href="{% url 'update_patient_view' patient.pk %}">Edit</a>
+            <a href="{% url 'delete_patient_view' patient.pk %}">Delete</a>
         </td>
     </tr>
     {% endfor %}
