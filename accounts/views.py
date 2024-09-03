@@ -229,7 +229,9 @@ def patient_list_view(request):
 @login_required
 @user_passes_test(admin_required)
 def patient_detail_view(request, pk):
+    print(pk)
     patient = get_object_or_404(CustomUser, pk=pk, role='patient')
+    print(patient)
     return render(request, 'patients/patient_detail.html', {'patient': patient})
 
 @login_required
